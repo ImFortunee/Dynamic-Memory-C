@@ -3,276 +3,331 @@
 #include <stdlib.h>
 #include <string.h>
 
-  
- 
-  struct user //struct for the linked list
-  {
-  char name[100];
-  char location1[100];
-  char location2[100];
-  int n_places_visited;
-  struct user *next;
+// Struct for the linked list
+struct user {
+    char name[100];
+    char location1[100];
+    char location2[100];
+    int n_places_visited;
+    struct user *next;
 };
-struct user *head=0;
-//struct for binary tree profile
-struct user_bt
-{char name[100];
-int places[100];
-int n_places_visited;
-struct user_bt *left;
-struct user_bt *right;
+
+struct user *head = NULL;
+
+// Struct for binary tree profile (currently unused)
+struct user_bt {
+    char name[100];
+    int places[100];
+    int n_places_visited;
+    struct user_bt *left;
+    struct user_bt *right;
 };
-struct user_bt *root = 0;
-//New user insertion into the linked list
+
+struct user_bt *root = NULL;
+
+// Function prototypes
 void insert_user_ll(char name[100]);
-//Inserts users in a linked list
-{
-    struct user *tmp, *new_node;
-    new_node=(struct user*)malloc(sizeof(struct user));
-    //New user is given memory
-   strcpy(new_node->name, name);
-   tmp = head;
-   if(head==0 || (strcmp(head->name, new_node->name)>=0))
-   {
-     new_node->next= head;
-     //connects user profile pointer to the first element of the linked list
+void remove_user_ll(char *name);
+void insert_visit_ll(char *name, int place_number, char place1[50], char place2[50]);
+void save_to_file_ll(FILE *f);
+void read_from_file_ll(FILE *f);
+void display_users();
+
+// Insert new user into linked list (sorted alphabetically)
+void insert_user_ll(char name[100]) {
+    struct user *new_node = (struct user*)malloc(sizeof(struct user));
+    if (new_node == NULL) {
+        printf("\nMemory allocation failed!\n");
+        return;
+    }
+    
+    strcpy(new_node->name, name);
+    strcpy(new_node->location1, "");
+    strcpy(new_node->location2, "");
     new_node->n_places_visited = 0;
-    head = new_node;
-    // The new user is now located at the top of the list
-   }
-   else 
-   {
-     while ((head->next !=0)||(strcmp (head->next->name, new_node)<0))
-   {head = head->next;}
-   new_node->next = head->next; 
-   //new_node is now allocated to the next element in the linked list    
-        new_node->n_places_visited = 0;
-        head->next = new_node;
-}
-}
-
-void remove_user_ll (char *name); // removes a user from the list
-{
-  struct user *tmp, *prev, *after;
-  tmp = head;
-  prev = 0
-  after = head->next;
-
-  while((strcmp(head->name, name)!=0)||(head !=0))
-  {prev = head;
-  head = head->next;
-  after = head->next;
-  }
-  if (tmp==NULL) // If name is not found...
-  {
-    printf("\n Name not found, try again...");
-  }
-  else
-  {
-   prev->next = head->next;
-   free(head); 
-  }
-  else 
-  
-  if ((head != 0)||(after == 0))
-  {
-    free(tmp);
-  }
-}
-
-
-  void insert_visit_ll(char *name, int place_number, char place1[50], char place2[50])// inserts locations to a given user
-  {
-    int numblocat;
+    new_node->next = NULL;
     
-    printf("\n Choose the number of locations you would like to add - up to 2");
-    scanf("%d", &numblocat);
-    int x;
-    x = numblocat - place_number;
+    // If list is empty or new user should be first
+    if (head == NULL || strcmp(head->name, new_node->name) > 0) {
+        new_node->next = head;
+        head = new_node;
+        printf("\nUser %s added successfully!\n", name);
+        return;
+    }
+    
+    // Find correct position to insert
+    struct user *current = head;
+    while (current->next != NULL && strcmp(current->next->name, new_node->name) < 0) {
+        current = current->next;
+    }
+    
+    new_node->next = current->next;
+    current->next = new_node;
+    printf("\nUser %s added successfully!\n", name);
+}
+
+// Remove user from linked list
+void remove_user_ll(char *name) {
+    if (head == NULL) {
+        printf("\nList is empty. No users to remove.\n");
+        return;
+    }
+    
+    struct user *current = head;
+    struct user *prev = NULL;
+    
+    // If head node is to be deleted
+    if (strcmp(head->name, name) == 0) {
+        head = head->next;
+        free(current);
+        printf("\nUser %s removed successfully!\n", name);
+        return;
+    }
+    
+    // Search for the user to delete
+    while (current != NULL && strcmp(current->name, name) != 0) {
+        prev = current;
+        current = current->next;
+    }
+    
+    if (current == NULL) {
+        printf("\nName not found, try again...\n");
+        return;
+    }
+    
+    prev->next = current->next;
+    free(current);
+    printf("\nUser %s removed successfully!\n", name);
+}
+
+// Insert visit location for a user
+void insert_visit_ll(char *name, int place_number, char place1[50], char place2[50]) {
+    struct user *current = head;
+    
+    // Find the user
+    while (current != NULL && strcmp(current->name, name) != 0) {
+        current = current->next;
+    }
+    
+    if (current == NULL) {
+        printf("\nUser not found, try again.\n");
+        return;
+    }
+    
+    if (current->n_places_visited >= 2) {
+        printf("\nUser already has maximum locations (2).\n");
+        return;
+    }
+    
     char place[100];
-    if ((x>0)|| (x<3))
-    {
-      printf("\n Location of user: ");
-      scanf("%s", &place[100]);
-    if((numblocat-place_number)==2)
-    {
-      strcpy(place1, place);
-    }
-    else
-    if ((numblocat-place_number)==1)
-    {
-      strcpy(place2, place);
-    }
-    }
-    else
-      {
-       printf(" \n User not found, try again.");
-     }
-      }
-
-
-
-
-  void save_to_file_ll(FILE *f) // This function will allow you to save the data entered into a file
-  {
-    struct user *tmp;
-    f=fopen("UserDataFile.txt", "wb");
-    tmp = head;
-    if (f!=0)
-    {
-      for (tmp=head; head!=0; head=head->next)
-      {
-        fwrite(head, sizeof(struct user), 1, f);
-      }
+    printf("\nEnter location: ");
+    scanf("%s", place);
     
-       printf("\n Data Successfully Saved.");
+    if (current->n_places_visited == 0) {
+        strcpy(current->location1, place);
+        current->n_places_visited = 1;
+        printf("\nLocation added successfully!\n");
+    } else if (current->n_places_visited == 1) {
+        strcpy(current->location2, place);
+        current->n_places_visited = 2;
+        printf("\nLocation added successfully!\n");
     }
-    else
-    {
-      printf("\n There has been a problem saving your data.\n");
-     }
-    fclose(f);
-  }
-  void read_from_file_ll(FILE *f) // this function allows you to load the data from a file
-
-  {
-    int result;
-    struct user *tmp, *new_node, *prev;
-    prev = 0;
-    new_node = (struct user*) malloc(sizeof(struct user));
-   f = fopen("UserDataFile.txt", "rb");
-   
-   if (f != 0)
-   {
-     result = fread(new_node, sizeof(struct user), 1, f);
-     while(result !=0)
-     {
-       if (new_node->n_places_visited == 2)
-       {
-         printf("\n %s was last seen at: \n %s \n %s", new_node->name, new_node->location2, new_node->location1);
-       }
-       else 
-       if (new_node->n_places_visited == 1)
-       {
-         printf("\n %s was last seen at: \n %s", new_node->name, new_node->location1);
-       }
-       else
-       if (new_node->n_places_visited ==0)
-       {
-         printf("\n %s was not found at any locations", new_node->name);
-       }
-
-       result = fread(new_node, sizeof(struct user), 1, f);
-     }
-     if (head == 0)
-     {
-       head = new_node;
-       new_node->next=0;
-     }
-     else
-     {
-       tmp=head;
-       if(strcmp(head->name, new_node->name)>=0)
-       {
-         head = new_node;
-       new_node->next=head;
-       }
-
-       else
-       {
-         while((head !=0)||(strcmp(head->name, new_node->name)<0))
-       {
-         prev=head;
-         head=head->next;
-       }
-       prev->next = new_node;
-       new_node->next =head;
-       }
-     }
-   }
-   else
-   {
-     printf("\n Error Reading File");
-   }
-   fclose(f);
-  }
-
-
-int main()
-{
-  int option;
-  FILE *fp;
-  char username [50];
-  char place[50];
-  do{
-  printf("\n COVID Tracing App Menu:\n\n 1)Introduc user \n\n 2) Introduce visit to venue\n\n 3) Remove user \n\n 4) Check which users have been in a particular place \n\n 5) Save to file \n\n 6) Retrieve data from file \n\n 7) Exit");
-  scanf("%d", &option);
-  switch(option)
-  {
-    case 1:
-    printf("\n Username:");
-    scanf("%s", &username[50]);
-    insert_user_ll(username);
-
-    break;
-
-    case 2:
-        printf("\n");
-          struct user *tmp;
-          tmp = head;
-    printf("\n Who would you like to insert a Location for?");
-    scanf("%s", &username[50]);
-    
-    if(strcmp(tmp->name, username)==0)
-     {
-       insert_visit_ll(tmp->name, tmp->n_places_visited, tmp->location1, tmp->location2);
-         }
-     else
-      {
-       while(strcmp(tmp->name, username)<0)
-        {
-          tmp=tmp->next;
-         }
-        insert_visit_ll(tmp->name, tmp->n_places_visited,tmp->location1, tmp->location2);
-      }
-
-      break;
-  
-     case 3:
-     printf("\n\n Enter User you would like to remove:");
-     scanf("%s", &username[50]);
-     remove_user_ll(username);
-
-     break;
-
-     case 4:
-    
-     printf("\n\n Select the location at which you would like to check a user's presence");
-     scanf("%s", &place[50]);
-
-     break;
-
-     case 5:
-     save_to_file_ll(fp);
-     printf("\n User Data Successfully saved");
-
-     break;
-
-     case 6:
-
-     read_from_file_ll(fp);
-
-     break;
-
-     case 7:
-
-     printf("\n Exiting Application...");
-
-     break;
-
-
-  }
 }
-  while(option !=7);
-  return 0;
+
+// Save data to file
+void save_to_file_ll(FILE *f) {
+    f = fopen("UserDataFile.txt", "wb");
+    if (f == NULL) {
+        printf("\nThere has been a problem saving your data.\n");
+        return;
+    }
+    
+    struct user *current = head;
+    while (current != NULL) {
+        fwrite(current, sizeof(struct user), 1, f);
+        current = current->next;
+    }
+    
+    fclose(f);
+    printf("\nData Successfully Saved.\n");
+}
+
+// Read data from file
+void read_from_file_ll(FILE *f) {
+    f = fopen("UserDataFile.txt", "rb");
+    if (f == NULL) {
+        printf("\nError Reading File or file doesn't exist.\n");
+        return;
+    }
+    
+    struct user *new_node;
+    int result;
+    
+    while (1) {
+        new_node = (struct user*)malloc(sizeof(struct user));
+        if (new_node == NULL) {
+            printf("\nMemory allocation failed!\n");
+            break;
+        }
+        
+        result = fread(new_node, sizeof(struct user), 1, f);
+        if (result == 0) {
+            free(new_node);
+            break;
+        }
+        
+        // Display user information
+        if (new_node->n_places_visited == 2) {
+            printf("\n%s was last seen at:\n%s\n%s\n", 
+                   new_node->name, new_node->location1, new_node->location2);
+        } else if (new_node->n_places_visited == 1) {
+            printf("\n%s was last seen at:\n%s\n", 
+                   new_node->name, new_node->location1);
+        } else {
+            printf("\n%s was not found at any locations\n", new_node->name);
+        }
+        
+        free(new_node);
+    }
+    
+    fclose(f);
+}
+
+// Display all users and their locations
+void display_users() {
+    if (head == NULL) {
+        printf("\nNo users in the system.\n");
+        return;
+    }
+    
+    struct user *current = head;
+    printf("\n=== USER LIST ===\n");
+    
+    while (current != NULL) {
+        printf("\nName: %s\n", current->name);
+        if (current->n_places_visited == 0) {
+            printf("Locations: None\n");
+        } else if (current->n_places_visited == 1) {
+            printf("Location: %s\n", current->location1);
+        } else {
+            printf("Locations: %s, %s\n", current->location1, current->location2);
+        }
+        current = current->next;
+    }
+}
+
+// Check users at a specific location
+void check_location(char *location) {
+    struct user *current = head;
+    int found = 0;
+    
+    printf("\nUsers found at location '%s':\n", location);
+    
+    while (current != NULL) {
+        if ((current->n_places_visited >= 1 && strcmp(current->location1, location) == 0) ||
+            (current->n_places_visited >= 2 && strcmp(current->location2, location) == 0)) {
+            printf("- %s\n", current->name);
+            found = 1;
+        }
+        current = current->next;
+    }
+    
+    if (!found) {
+        printf("No users found at this location.\n");
+    }
+}
+
+int main() {
+    int option;
+    FILE *fp;
+    char username[50];
+    char place[50];
+    
+    printf("=== COVID CONTACT TRACING APP ===\n");
+    
+    do {
+        printf("\n\nCOVID Tracing App Menu:\n");
+        printf("1) Add user\n");
+        printf("2) Add visit to venue\n");
+        printf("3) Remove user\n");
+        printf("4) Check users at a location\n");
+        printf("5) Display all users\n");
+        printf("6) Save to file\n");
+        printf("7) Load data from file\n");
+        printf("8) Exit\n");
+        printf("\nEnter your choice: ");
+        
+        scanf("%d", &option);
+        
+        switch(option) {
+            case 1:
+                printf("\nEnter username: ");
+                scanf("%s", username);
+                insert_user_ll(username);
+                break;
+                
+            case 2:
+                printf("\nEnter username to add location for: ");
+                scanf("%s", username);
+                
+                struct user *tmp = head;
+                int user_found = 0;
+                
+                while (tmp != NULL) {
+                    if (strcmp(tmp->name, username) == 0) {
+                        insert_visit_ll(tmp->name, tmp->n_places_visited, 
+                                      tmp->location1, tmp->location2);
+                        user_found = 1;
+                        break;
+                    }
+                    tmp = tmp->next;
+                }
+                
+                if (!user_found) {
+                    printf("\nUser not found!\n");
+                }
+                break;
+                
+            case 3:
+                printf("\nEnter user to remove: ");
+                scanf("%s", username);
+                remove_user_ll(username);
+                break;
+                
+            case 4:
+                printf("\nEnter location to check: ");
+                scanf("%s", place);
+                check_location(place);
+                break;
+                
+            case 5:
+                display_users();
+                break;
+                
+            case 6:
+                save_to_file_ll(fp);
+                break;
+                
+            case 7:
+                read_from_file_ll(fp);
+                break;
+                
+            case 8:
+                printf("\nExiting Application...\n");
+                break;
+                
+            default:
+                printf("\nInvalid option! Please try again.\n");
+                break;
+        }
+    } while(option != 8);
+    
+    // Free remaining memory
+    while (head != NULL) {
+        struct user *temp = head;
+        head = head->next;
+        free(temp);
+    }
+    
+    return 0;
 }
