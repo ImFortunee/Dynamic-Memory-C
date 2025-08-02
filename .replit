@@ -61,3 +61,23 @@ setupCommands = [
 ]
 stopAtEntry = false
 type = "cppdbg"
+
+[workflows]
+runButton = "Build and Run"
+
+[[workflows.workflow]]
+name = "Build and Run"
+author = 4698708
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "make clean"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "make"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./main"
