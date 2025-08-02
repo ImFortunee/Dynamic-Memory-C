@@ -121,7 +121,10 @@ void insert_visit_ll(char *name, int place_number, char place1[50], char place2[
     
     char place[100];
     printf("\nEnter location: ");
-    scanf("%s", place);
+    if (scanf("%s", place) != 1) {
+        printf("\nInvalid input!\n");
+        return;
+    }
     
     if (current->n_places_visited == 0) {
         strcpy(current->location1, place);
@@ -257,18 +260,30 @@ int main() {
         printf("8) Exit\n");
         printf("\nEnter your choice: ");
         
-        scanf("%d", &option);
+        if (scanf("%d", &option) != 1) {
+            // Clear the input buffer if scanf fails
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
+            printf("\nInvalid input! Please enter a number.\n");
+            continue;
+        }
         
         switch(option) {
             case 1:
                 printf("\nEnter username: ");
-                scanf("%s", username);
-                insert_user_ll(username);
+                if (scanf("%s", username) == 1) {
+                    insert_user_ll(username);
+                } else {
+                    printf("\nInvalid input!\n");
+                }
                 break;
                 
             case 2:
                 printf("\nEnter username to add location for: ");
-                scanf("%s", username);
+                if (scanf("%s", username) != 1) {
+                    printf("\nInvalid input!\n");
+                    break;
+                }
                 
                 struct user *tmp = head;
                 int user_found = 0;
@@ -290,14 +305,20 @@ int main() {
                 
             case 3:
                 printf("\nEnter user to remove: ");
-                scanf("%s", username);
-                remove_user_ll(username);
+                if (scanf("%s", username) == 1) {
+                    remove_user_ll(username);
+                } else {
+                    printf("\nInvalid input!\n");
+                }
                 break;
                 
             case 4:
                 printf("\nEnter location to check: ");
-                scanf("%s", place);
-                check_location(place);
+                if (scanf("%s", place) == 1) {
+                    check_location(place);
+                } else {
+                    printf("\nInvalid input!\n");
+                }
                 break;
                 
             case 5:
