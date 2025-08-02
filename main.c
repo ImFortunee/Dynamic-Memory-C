@@ -123,8 +123,14 @@ void insert_visit_ll(char *name, int place_number, char place1[50], char place2[
     printf("\nEnter location: ");
     if (scanf("%99s", place) != 1) {
         printf("\nInvalid input!\n");
+        // Clear input buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
         return;
     }
+    // Clear input buffer
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
     
     if (current->n_places_visited == 0) {
         strcpy(current->location1, place);
