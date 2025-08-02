@@ -121,7 +121,7 @@ void insert_visit_ll(char *name, int place_number, char place1[50], char place2[
     
     char place[100];
     printf("\nEnter location: ");
-    if (scanf("%s", place) != 1) {
+    if (scanf("%99s", place) != 1) {
         printf("\nInvalid input!\n");
         return;
     }
@@ -268,10 +268,14 @@ int main() {
             continue;
         }
         
+        // Clear any remaining characters in the input buffer
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF);
+        
         switch(option) {
             case 1:
                 printf("\nEnter username: ");
-                if (scanf("%s", username) == 1) {
+                if (scanf("%99s", username) == 1) {
                     insert_user_ll(username);
                 } else {
                     printf("\nInvalid input!\n");
@@ -280,7 +284,7 @@ int main() {
                 
             case 2:
                 printf("\nEnter username to add location for: ");
-                if (scanf("%s", username) != 1) {
+                if (scanf("%99s", username) != 1) {
                     printf("\nInvalid input!\n");
                     break;
                 }
@@ -305,7 +309,7 @@ int main() {
                 
             case 3:
                 printf("\nEnter user to remove: ");
-                if (scanf("%s", username) == 1) {
+                if (scanf("%99s", username) == 1) {
                     remove_user_ll(username);
                 } else {
                     printf("\nInvalid input!\n");
@@ -314,7 +318,7 @@ int main() {
                 
             case 4:
                 printf("\nEnter location to check: ");
-                if (scanf("%s", place) == 1) {
+                if (scanf("%49s", place) == 1) {
                     check_location(place);
                 } else {
                     printf("\nInvalid input!\n");
