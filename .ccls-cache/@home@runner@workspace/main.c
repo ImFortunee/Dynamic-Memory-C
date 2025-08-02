@@ -265,20 +265,33 @@ int main() {
             int c;
             while ((c = getchar()) != '\n' && c != EOF);
             printf("\nInvalid input! Please enter a number.\n");
-            continue;
+            option = 0; // Set to invalid option to continue loop
+        } else {
+            // Clear any remaining characters in the input buffer
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF);
         }
         
-        // Clear any remaining characters in the input buffer
-        int c;
-        while ((c = getchar()) != '\n' && c != EOF);
+        if (option < 1 || option > 8) {
+            if (option != 0) { // Don't print error for scanf failure (already handled above)
+                printf("\nInvalid option! Please enter a number between 1 and 8.\n");
+            }
+            continue;
+        }
         
         switch(option) {
             case 1:
                 printf("\nEnter username: ");
                 if (scanf("%99s", username) == 1) {
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                     insert_user_ll(username);
                 } else {
                     printf("\nInvalid input!\n");
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                 }
                 break;
                 
@@ -286,8 +299,14 @@ int main() {
                 printf("\nEnter username to add location for: ");
                 if (scanf("%99s", username) != 1) {
                     printf("\nInvalid input!\n");
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                     break;
                 }
+                // Clear input buffer
+                int c;
+                while ((c = getchar()) != '\n' && c != EOF);
                 
                 struct user *tmp = head;
                 int user_found = 0;
@@ -310,18 +329,30 @@ int main() {
             case 3:
                 printf("\nEnter user to remove: ");
                 if (scanf("%99s", username) == 1) {
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                     remove_user_ll(username);
                 } else {
                     printf("\nInvalid input!\n");
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                 }
                 break;
                 
             case 4:
                 printf("\nEnter location to check: ");
                 if (scanf("%49s", place) == 1) {
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                     check_location(place);
                 } else {
                     printf("\nInvalid input!\n");
+                    // Clear input buffer
+                    int c;
+                    while ((c = getchar()) != '\n' && c != EOF);
                 }
                 break;
                 
